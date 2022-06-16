@@ -22,8 +22,6 @@ namespace FileFlows.VideoNodes.FfmpegBuilderNodes
         {
             var model = this.Model;
             List<string> ffArgs = new List<string>();
-            ffArgs.AddRange(new[] { "-strict", "-2" }); // allow experimental stuff
-            ffArgs.AddRange(new[] { "-fflags", "+genpts" }); //Generate missing PTS if DTS is present.
 
             if(model.CustomParameters?.Any() == true)
                 ffArgs.AddRange(model.CustomParameters);
@@ -62,12 +60,15 @@ namespace FileFlows.VideoNodes.FfmpegBuilderNodes
 
             string extension = model.Extension?.EmptyAsNull() ?? "mkv";
 
-            List<string> startArgs = new List<string>();
+
             if (model.InputFiles?.Any() == false)
                 model.InputFiles.Add(args.WorkingFile);
             else
                 model.InputFiles[0] = args.WorkingFile;
-
+                
+            List<string> startArgs = new List<string>();
+            startArgs.AddRange(new[] { "-strict", "-2" }); // allow experimental stuff
+            startArgs.AddRange(new[] { "-fflags", "+genpts" }); //Generate missing PTS if DTS is present.
             startArgs.AddRange(new[] {
                 "-probesize", VideoInfoHelper.ProbeSize + "M"
             });
